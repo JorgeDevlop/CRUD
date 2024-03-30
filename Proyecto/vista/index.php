@@ -1,5 +1,10 @@
 <?php require '../config/database.php';  
 
+$sqlEntradas = "SELECT e.id,e.folio,d.nombre AS estado FROM entradas AS e INNER JOIN estado AS d
+ON e.id_estado=d.id ";
+
+$entradas = $conn->query($sqlEntradas);
+
 
 ?>
 
@@ -39,6 +44,19 @@
         </tr>
         </thead>
         <tbody>
+        <?php while($row_entrada = $entradas->fetch_assoc()){ ?>
+
+            <tr>
+                <td><?= $row_entrada['id']?></td>
+                <td><?= $row_entrada['folio']?></td>
+                <td><?= $row_entrada['estado']?></td>
+                <td></td>
+
+
+            </tr>
+        
+            <?php }?>
+
 
         
 
