@@ -13,6 +13,8 @@ VALUES ('$folio',$estado,NOW(),$modulos,'$cliente','$fallaCliente')" ;
 
 if ($conn->query($sql)){
     $id = $conn->insert_id;
+
+  
 }
 
 header('Location:index.php');
