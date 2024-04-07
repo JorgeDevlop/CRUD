@@ -19,6 +19,18 @@ $entradas = $conn->query($sqlEntradas);
     <link href="../assets/css/all.min.css" rel="stylesheet">
 </head>
 <body>
+<form action="" method="GET" class="container py-1">
+    <div class="input-group input-group-sm">
+        <input type="text"  placeholder="Buscar..." name="q" value="<?php echo isset($_GET['q']) ? $_GET['q'] : ''; ?>">
+        <button class="btn btn-primary " type="submit">Buscar</button>
+        <?php if(isset($_GET['q']) && !empty($_GET['q'])): ?>
+            <a href="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" class="btn btn-secondary btn-sm">Limpiar</a>
+        <?php endif; ?>
+    </div>
+</form>
+
+
+
     <div class="container py-3">
         <h2 class="text-center">Registro</h2>
         <div class="row justify-content-end">
@@ -42,6 +54,33 @@ $entradas = $conn->query($sqlEntradas);
                 </tr>
             </thead>
             <tbody>
+<?php
+require '../config/database.php';  
+
+// Verificar si se ha enviado un término de búsqueda
+if(isset($_GET['q']) && !empty($_GET['q'])) {
+    $searchTerm = $_GET['q'];
+    // Consulta SQL con la cláusula WHERE para filtrar los resultados según el término de búsqueda
+    $sqlEntradas = "SELECT e.id, e.folio, d.nombre AS estado, e.ingresoFecha, e.cliente, e.fallaCliente, m.nombre AS modulo
+                    FROM entradas AS e 
+                    INNER JOIN estado AS d ON e.id_estado = d.id
+                    INNER JOIN modulo AS m ON e.id_modulo = m.id
+                    WHERE e.folio LIKE '%$searchTerm%'
+                    OR d.nombre LIKE '%$searchTerm%'
+                    OR e.cliente LIKE '%$searchTerm%'
+                    OR e.fallaCliente LIKE '%$searchTerm%'
+                    OR m.nombre LIKE '%$searchTerm%'";
+} else {
+    // Consulta SQL sin la cláusula WHERE si no se ha enviado un término de búsqueda
+    $sqlEntradas = "SELECT e.id, e.folio, d.nombre AS estado, e.ingresoFecha, e.cliente, e.fallaCliente, m.nombre AS modulo
+                    FROM entradas AS e 
+                    INNER JOIN estado AS d ON e.id_estado = d.id
+                    INNER JOIN modulo AS m ON e.id_modulo = m.id";
+}
+
+$entradas = $conn->query($sqlEntradas);
+?>
+
                 <?php while($row_entrada = $entradas->fetch_assoc()){ ?>
                     <tr>
                         <td><?= $row_entrada['id']?></td>
@@ -82,7 +121,7 @@ $estados = $conn->query($sqlEstado);
  include 'eliminaModal.php'; ?>
 
 
-        <script>
+<script>
     let nuevoModal = document.getElementById('nuevoModal');
     let editaModal = document.getElementById('editaModal');
     let eliminaModal = document.getElementById('eliminaModal');
