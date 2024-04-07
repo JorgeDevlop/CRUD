@@ -7,7 +7,11 @@ $sqlEntradas = "SELECT e.id, e.folio, d.nombre AS estado, e.ingresoFecha, e.clie
                 INNER JOIN modulo AS m ON e.id_modulo = m.id";
 
 $entradas = $conn->query($sqlEntradas);
+
+// Establecer la conexión con la base de datos
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -40,7 +44,7 @@ $entradas = $conn->query($sqlEntradas);
                 </a>
             </div>
         </div>
-        <table class="table table-sm table-striped table-hover mt-4">
+        <table class="table table-responsive-sm table-striped table-hover mt-3">
             <thead class="table-dark">
                 <tr>
                     <th>#</th>
@@ -51,6 +55,11 @@ $entradas = $conn->query($sqlEntradas);
                     <th>Cliente</th>
                     <th>Falla Cliente</th>
                     <th>Acción</th>
+                 
+                   
+
+
+                    
                 </tr>
             </thead>
             <tbody>
@@ -92,8 +101,10 @@ $entradas = $conn->query($sqlEntradas);
                         <td><?= $row_entrada['fallaCliente']?></td>
                         <td>
 
-                        <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editaModal" data-bs-id="<?= $row_entrada['id'];?>"> <i class="fa-solid fa-pen-to-square"></i> Editar</a>
-                       <a href="#" class="btn btn-sm btn-danger"  data-bs-toggle="modal" data-bs-target="#eliminaModal" data-bs-id="<?= $row_entrada['id'];?>"><i class="fa-solid fa-trash"></i> Eliminar</a>
+                        <a href="#" class="btn btn-responsive-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editaModal" data-bs-id="<?= $row_entrada['id'];?>"> <i class="fa-solid fa-pen-to-square"></i> Editar</a>
+                       <a href="#" class="btn btn-responsive-sm btn-danger"  data-bs-toggle="modal" data-bs-target="#eliminaModal" data-bs-id="<?= $row_entrada['id'];?>"><i class="fa-solid fa-trash"></i> Eliminar</a>
+                       <button type="button" class="btn tn-responsive-sm btn-primary" data-bs-toggle="modal" data-bs-target="#agregarEntradaModal" data-id="<?= $row_entrada['id']; ?>">Lab</button>
+
                         </td> 
                     </tr>
                 <?php }?>
@@ -103,95 +114,34 @@ $entradas = $conn->query($sqlEntradas);
         <?php 
         $sqlModulo = "SELECT id, nombre FROM modulo";
         $modulos = $conn->query($sqlModulo);
+        $sqlEntrar = "SELECT id, folio FROM entradas";
+        $entra = $conn->query($sqlEntrar);
+        $sqlEstado = "SELECT id, nombre FROM estado";
+        $estados = $conn->query($sqlEstado);
+        $sqlResponsable = "SELECT id, nombre FROM responsable";
+        $responsable = $conn->query($sqlResponsable);
+        $sqlConsecutivo = "SELECT id, codigo FROM consecutivo";
+        $consecutivo = $conn->query($sqlConsecutivo);
+
+        include 'nuevoModal.php'; 
+
+        $estados->data_seek(0); 
+        $modulos->data_seek(0);
+        $responsable->data_seek(0);
+        $consecutivo->data_seek(0);
+
+
+        include 'editaModal.php';
+        include 'eliminaModal.php';
+        include 'agregarEntrada.php'; 
         ?>
 
+
 <?php 
-$sqlEstado = "SELECT id, nombre FROM estado";
-$estados = $conn->query($sqlEstado);
+
 ?>
 
-
-<?php 
- include 'nuevoModal.php'; 
-
- $estados->data_seek(0); 
- $modulos->data_seek(0);
-
- include 'editaModal.php';
- include 'eliminaModal.php'; ?>
-
-
-<script>
-    let nuevoModal = document.getElementById('nuevoModal');
-    let editaModal = document.getElementById('editaModal');
-    let eliminaModal = document.getElementById('eliminaModal');
-
-    nuevoModal.addEventListener('shown.bs.modal',event =>{
-        nuevoModal.querySelector('.modal-body #folio').focus()
-
-    })
-
-    nuevoModal.addEventListener('hide.bs.modal',event =>{
-
-    nuevoModal.querySelector('.modal-body #folio').value =""
-    nuevoModal.querySelector('.modal-body #estado').value =""
-    nuevoModal.querySelector('.modal-body #ingresoFecha').value =""
-    nuevoModal.querySelector('.modal-body #modulos').value =""
-    nuevoModal.querySelector('.modal-body #cliente').value =""
-    nuevoModal.querySelector('.modal-body #fallaCliente').value =""
-
-    })
-    editaModal.addEventListener('shown.bs.modal', event => {
-    let button = event.relatedTarget;
-    let id = button.getAttribute('data-bs-id');
-
-    let inputId = editaModal.querySelector('.modal-body #id');
-    let inputFolio = editaModal.querySelector('.modal-body #folio');
-    let inputEstado = editaModal.querySelector('.modal-body #estado');
-    let inputIngreso = editaModal.querySelector('.modal-body #ingresoFecha');
-    let inputModulos = editaModal.querySelector('.modal-body #modulos');
-    let inputCliente = editaModal.querySelector('.modal-body #cliente');
-    let inputFalla = editaModal.querySelector('.modal-body #fallaCliente');
-
-    let url = "getEntradas.php";
-    let formData = new FormData();
-    formData.append('id', id);
-
-    fetch(url, {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        inputId.value = data.id;
-        inputFolio.value = data.folio;
-        inputEstado.value = data.estado;
-        inputIngreso.value = data.ingresoFecha; 
-        // Buscar el módulo correspondiente en la lista de módulos y seleccionarlo
-        let options = inputModulos.querySelectorAll('option');
-        for (let option of options) {
-            if (option.value == data.id_modulo) {
-                option.selected = true;
-                break;
-            }
-        }
-        inputCliente.value = data.cliente;
-        inputFalla.value = data.falla;
-    })
-    .catch(err => console.log(err));
-});
-
-     
-
-    eliminaModal.addEventListener('shown.bs.modal', event => {
-
-        let button = event.relatedTarget;
-        let id = button.getAttribute('data-bs-id');
-        eliminaModal.querySelector('.modal-footer #id').value=id
-
-    })
-</script>
-
+        <script src="../assets/js/main.js"></script>
         <script src="../assets/js/bootstrap.bundle.min.js"></script>
     </div>
 </body>

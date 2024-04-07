@@ -7,21 +7,58 @@
             </div>
             <div class="modal-body">
                 <!-- Formulario para agregar nueva entrada -->
-                <form action="guarda.php" method="post" enctype="multipart/form-data" id="formularioNuevaEntrada">
+                <form action="guardar.php" method="post" enctype="multipart/form-data" id="formularioNuevaEntrada">
                     <div class="mb-3">
-                        <label for="folio" class="form-label">Folio:</label>
-                        <input type="text" class="form-control" id="folio" name="folio" required>
+                        <label for="estado" class="form-label">Entrada:</label>
+                        <select name="estado" id="estado" class="form-select" required>
+                            <option value="">Seleccionar...</option>
+                            <?php while($row_entrar = $entra->fetch_assoc()): ?>
+                                <option value="<?= $row_entrar["id"]; ?>"><?= $row_entrar["folio"]; ?></option>
+                            <?php endwhile; ?>
+                        </select>
                     </div>
                     <div class="mb-3">
-                        <label for="consecutivo" class="form-label">Consecutivo</label>
-                        <input type="text" class="form-control" id="consecutivo" name="consecutivo" required>
+                    <label for="responsable" class="form-label">Consecutivo</label>
+                        <select name="consecutivo" id="consecutivo" class="form-select" required>
+                            <option value="">Seleccionar...</option>
+                            <?php while($row_consecutivo = $consecutivo->fetch_assoc()): ?>
+                                <option value="<?= $row_consecutivo["id"]; ?>"><?= $row_consecutivo["codigo"]; ?></option>
+                            <?php endwhile; ?>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="responsable" class="form-label">Responsable</label>
-                        <input type="text" class="form-control" id="responsable" name="responsable" required>
+                        <select name="responsable" id="responsable" class="form-select" required>
+                            <option value="">Seleccionar...</option>
+                            <?php while($row_responsables = $responsable->fetch_assoc()): ?>
+                                <option value="<?= $row_responsables["id"]; ?>"><?= $row_responsables["nombre"]; ?></option>
+                            <?php endwhile; ?>
+                        </select>
+                        <div class="mb-3">
+                <label for="diagMotor" class ="form-label">Falla Motor:</label>
+                    <textarea type="diagMotor" name="diagMotor" id="diagMotor" class="form-control" cols="10" rows="3" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="repMotor" class ="form-label">Reparacion:</label>
+                    <textarea type="repMotor" name="repMotor" id="repMotor" class="form-control" cols="10" rows="3" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="infoCpl" class ="form-label">Cpl:</label>
+                    <textarea type="infoCpl" name="infoCpl" id="infoCpl" class="form-control" cols="1" rows="1" required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="comentario" class ="form-label">Comentario:</label>
+                    <textarea type="comentario" name="comentario" id="comentario" class="form-control" cols="10" rows="3"></textarea>
+            </div>
+
+
+                        
                     </div>
                     <!-- Otros campos de entrada para diag_motor, rep_motor, info_cpl, comentario -->
-                    <!-- Recuerda agregar un campo oculto para el id_entrada (FK) -->
+                    
                     <input type="hidden" id="idEntrada" name="idEntrada" value="valor_folio_aqui">
                 </form>
             </div>
