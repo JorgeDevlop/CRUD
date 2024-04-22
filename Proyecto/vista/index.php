@@ -1,14 +1,20 @@
 <?php 
 require '../config/database.php';  
 
-$sqlEntradas = "SELECT e.id, e.folio, d.nombre AS estado, e.ingresoFecha, e.cliente, e.fallaCliente, m.nombre AS modulo
+$sqlEntradas = "SELECT e.id, c.codigo AS consecutivo, d.nombre AS estado, e.ingresoFecha, e.cliente, e.fallaCliente, m.nombre AS modulo
                 FROM entradas AS e 
                 INNER JOIN estado AS d ON e.id_estado = d.id
-                INNER JOIN modulo AS m ON e.id_modulo = m.id";
+                INNER JOIN modulo AS m ON e.id_modulo = m.id
+                INNER JOIN consecutivo AS c ON e.id_consecutivo = c.id";
 
 $entradas = $conn->query($sqlEntradas);
 
-// Establecer la conexión con la base de datos
+$sqlConsecutivosDisponibles = "SELECT c.id, c.codigo 
+                                FROM consecutivo AS c
+                                WHERE c.id NOT IN (SELECT e.id_consecutivo FROM entradas AS e)";
+$consecutivosDisponibles = $conn->query($sqlConsecutivosDisponibles);
+
+
 ?>
 
 
@@ -21,6 +27,7 @@ $entradas = $conn->query($sqlEntradas);
     <title>CRUD-MDI</title>
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="../assets/css/all.min.css" rel="stylesheet">
+
 </head>
 <body>
 <form action="" method="GET" class="container py-1">
@@ -35,13 +42,17 @@ $entradas = $conn->query($sqlEntradas);
 
 
 
+
+
     <div class="container py-3">
         <h2 class="text-center">Registro</h2>
-        <div class="row justify-content-end">
+        <div class="row justify-content-space-between">
             <div class="col-auto">
                 <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#nuevoModal">
                     <i class="fas fa-plus-circle"></i> Nuevo registro 
-                </a>
+                    </a>
+
+
             </div>
         </div>
         <table class="table table-responsive-sm table-striped table-hover mt-3">
@@ -55,67 +66,64 @@ $entradas = $conn->query($sqlEntradas);
                     <th>Cliente</th>
                     <th>Falla Cliente</th>
                     <th>Acción</th>
-                 
-                   
 
-
-                    
+                
                 </tr>
             </thead>
             <tbody>
 <?php
 require '../config/database.php';  
 
-// Verificar si se ha enviado un término de búsqueda
 if(isset($_GET['q']) && !empty($_GET['q'])) {
     $searchTerm = $_GET['q'];
     // Consulta SQL con la cláusula WHERE para filtrar los resultados según el término de búsqueda
-    $sqlEntradas = "SELECT e.id, e.folio, d.nombre AS estado, e.ingresoFecha, e.cliente, e.fallaCliente, m.nombre AS modulo
-                    FROM entradas AS e 
-                    INNER JOIN estado AS d ON e.id_estado = d.id
-                    INNER JOIN modulo AS m ON e.id_modulo = m.id
-                    WHERE e.folio LIKE '%$searchTerm%'
-                    OR d.nombre LIKE '%$searchTerm%'
-                    OR e.cliente LIKE '%$searchTerm%'
-                    OR e.fallaCliente LIKE '%$searchTerm%'
-                    OR m.nombre LIKE '%$searchTerm%'";
+    $sqlEntradas = "SELECT e.id, c.codigo AS consecutivo, d.nombre AS estado, e.ingresoFecha, e.cliente, e.fallaCliente, m.nombre AS modulo
+    FROM entradas AS e 
+    INNER JOIN estado AS d ON e.id_estado = d.id
+    INNER JOIN modulo AS m ON e.id_modulo = m.id
+    INNER JOIN consecutivo AS c ON e.id_consecutivo = c.id
+    WHERE c.codigo LIKE '%$searchTerm%'
+    OR d.nombre LIKE '%$searchTerm%'
+    OR e.cliente LIKE '%$searchTerm%'
+    OR e.fallaCliente LIKE '%$searchTerm%'
+    OR m.nombre LIKE '%$searchTerm%'";
 } else {
     // Consulta SQL sin la cláusula WHERE si no se ha enviado un término de búsqueda
-    $sqlEntradas = "SELECT e.id, e.folio, d.nombre AS estado, e.ingresoFecha, e.cliente, e.fallaCliente, m.nombre AS modulo
-                    FROM entradas AS e 
-                    INNER JOIN estado AS d ON e.id_estado = d.id
-                    INNER JOIN modulo AS m ON e.id_modulo = m.id";
+    $sqlEntradas = "SELECT e.id, c.codigo AS consecutivo, d.nombre AS estado, e.ingresoFecha, e.cliente, e.fallaCliente, m.nombre AS modulo
+    FROM entradas AS e 
+    INNER JOIN estado AS d ON e.id_estado = d.id
+    INNER JOIN modulo AS m ON e.id_modulo = m.id
+    INNER JOIN consecutivo AS c ON e.id_consecutivo = c.id";
 }
+
 
 $entradas = $conn->query($sqlEntradas);
 ?>
 
-                <?php while($row_entrada = $entradas->fetch_assoc()){ ?>
-                    <tr>
-                        <td><?= $row_entrada['id']?></td>
-                        <td><?= $row_entrada['folio']?></td>
-                        <td><?= $row_entrada['estado']?></td>
-                        <td><?= $row_entrada['ingresoFecha']?></td>
-                        <td><?= $row_entrada['modulo']?></td>
-                        <td><?= $row_entrada['cliente']?></td>
-                        <td><?= $row_entrada['fallaCliente']?></td>
-                        <td>
+<?php while($row_entrada = $entradas->fetch_assoc()){ ?>
+    <tr>
+        <td><?= $row_entrada['id']?></td>
+        <td><?= $row_entrada['consecutivo']?></td>
+        <td><?= $row_entrada['estado']?></td>
+        <td><?= $row_entrada['ingresoFecha']?></td>
+        <td><?= $row_entrada['modulo']?></td>
+        <td><?= $row_entrada['cliente']?></td>
+        <td><?= $row_entrada['fallaCliente']?></td>
+        <td>
+            <a href="#" class="btn btn-responsive-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editaModal" data-bs-id="<?= $row_entrada['id'];?>"> <i class="fa-solid fa-pen-to-square"></i> Editar</a>
+            <a href="#" class="btn btn-responsive-sm btn-danger"  data-bs-toggle="modal" data-bs-target="#eliminaModal" data-bs-id="<?= $row_entrada['id'];?>"><i class="fa-solid fa-trash"></i> Eliminar</a>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarEntradaModal" data-consecutivo="<?= $row_entrada['consecutivo']; ?>">Lab</button>
 
-                        <a href="#" class="btn btn-responsive-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editaModal" data-bs-id="<?= $row_entrada['id'];?>"> <i class="fa-solid fa-pen-to-square"></i> Editar</a>
-                       <a href="#" class="btn btn-responsive-sm btn-danger"  data-bs-toggle="modal" data-bs-target="#eliminaModal" data-bs-id="<?= $row_entrada['id'];?>"><i class="fa-solid fa-trash"></i> Eliminar</a>
-                       <button type="button" class="btn tn-responsive-sm btn-primary" data-bs-toggle="modal" data-bs-target="#agregarEntradaModal" data-id="<?= $row_entrada['id']; ?>">Lab</button>
+        </td> 
+    </tr>
+<?php }?>
 
-                        </td> 
-                    </tr>
-                <?php }?>
             </tbody>
         </table>
         
         <?php 
         $sqlModulo = "SELECT id, nombre FROM modulo";
         $modulos = $conn->query($sqlModulo);
-        $sqlEntrar = "SELECT id, folio FROM entradas";
-        $entra = $conn->query($sqlEntrar);
         $sqlEstado = "SELECT id, nombre FROM estado";
         $estados = $conn->query($sqlEstado);
         $sqlResponsable = "SELECT id, nombre FROM responsable";
@@ -135,11 +143,6 @@ $entradas = $conn->query($sqlEntradas);
         include 'eliminaModal.php';
         include 'agregarEntrada.php'; 
         ?>
-
-
-<?php 
-
-?>
 
         <script src="../assets/js/main.js"></script>
         <script src="../assets/js/bootstrap.bundle.min.js"></script>

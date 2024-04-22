@@ -8,24 +8,17 @@
             <div class="modal-body">
                 <!-- Formulario para agregar nueva entrada -->
                 <form action="guardar.php" method="post" enctype="multipart/form-data" id="formularioNuevaEntrada">
-                    <div class="mb-3">
-                        <label for="estado" class="form-label">Entrada:</label>
-                        <select name="estado" id="estado" class="form-select" required>
+                   
+                <div class="mb-3">
+                        <label for="folio" class="form-label">Consecutivo</label>
+                        <select name="folio" id="folio" class="form-select" required>
                             <option value="">Seleccionar...</option>
-                            <?php while($row_entrar = $entra->fetch_assoc()): ?>
-                                <option value="<?= $row_entrar["id"]; ?>"><?= $row_entrar["folio"]; ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                    <label for="responsable" class="form-label">Consecutivo</label>
-                        <select name="consecutivo" id="consecutivo" class="form-select" required>
-                            <option value="">Seleccionar...</option>
-                            <?php while($row_consecutivo = $consecutivo->fetch_assoc()): ?>
+                            <?php 
+                            $consecutivo->data_seek(0);
+                            while($row_consecutivo = $consecutivo->fetch_assoc()): ?>
                                 <option value="<?= $row_consecutivo["id"]; ?>"><?= $row_consecutivo["codigo"]; ?></option>
                             <?php endwhile; ?>
                         </select>
-                    </div>
                     <div class="mb-3">
                         <label for="responsable" class="form-label">Responsable</label>
                         <select name="responsable" id="responsable" class="form-select" required>
@@ -51,7 +44,7 @@
 
             <div class="mb-3">
                 <label for="comentario" class ="form-label">Comentario:</label>
-                    <textarea type="comentario" name="comentario" id="comentario" class="form-control" cols="10" rows="3"></textarea>
+                    <textarea type="comentario" name="comentario" id="comentario" class="form-control" cols="5" rows="3"></textarea>
             </div>
 
 

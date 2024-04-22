@@ -1,3 +1,5 @@
+
+
 <!-- Modal -->
 <div class="modal fade" id="nuevoModal" tabindex="-1" aria-labelledby="nuevoModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -9,10 +11,15 @@
       <div class="modal-body">
         <form action="guarda.php" method="post" enctype="multipart/form-data">
    
-            <div class="mb-3">
-                <label for="folio" class ="form-label">Folio:</label>
-                <input type="text" name="folio" id="folio" class="form-control" required>
-            </div>
+        <div class="mb-3">
+    <label for="folio" class="form-label">Folio</label>
+    <select name="folio" id="folio" class="form-select" required>
+        <option value="">Seleccionar...</option>
+        <?php while($row_consecutivo = $consecutivosDisponibles->fetch_assoc()): ?>
+            <option value="<?= $row_consecutivo["id"]; ?>"><?= $row_consecutivo["codigo"]; ?></option>
+        <?php endwhile; ?>
+    </select>
+</div>
             <div class="mb-3">
                 <label for="estado" class ="form-label">Estado:</label>
                 <select name="estado" id="estado" class="form-select" required>

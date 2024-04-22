@@ -1,24 +1,21 @@
+let nuevoModal = document.getElementById('nuevoModal');
+let editaModal = document.getElementById('editaModal');
+let eliminaModal = document.getElementById('eliminaModal');
 
-    let nuevoModal = document.getElementById('nuevoModal');
-    let editaModal = document.getElementById('editaModal');
-    let eliminaModal = document.getElementById('eliminaModal');
+nuevoModal.addEventListener('shown.bs.modal', event => {
+    nuevoModal.querySelector('.modal-body #folio').focus();
+});
 
-    nuevoModal.addEventListener('shown.bs.modal',event =>{
-        nuevoModal.querySelector('.modal-body #folio').focus()
+nuevoModal.addEventListener('hide.bs.modal', event => {
+    nuevoModal.querySelector('.modal-body #folio').value = "";
+    nuevoModal.querySelector('.modal-body #estado').value = "";
+    nuevoModal.querySelector('.modal-body #ingresoFecha').value = "";
+    nuevoModal.querySelector('.modal-body #modulos').value = "";
+    nuevoModal.querySelector('.modal-body #cliente').value = "";
+    nuevoModal.querySelector('.modal-body #fallaCliente').value = "";
+});
 
-    })
-
-    nuevoModal.addEventListener('hide.bs.modal',event =>{
-
-    nuevoModal.querySelector('.modal-body #folio').value =""
-    nuevoModal.querySelector('.modal-body #estado').value =""
-    nuevoModal.querySelector('.modal-body #ingresoFecha').value =""
-    nuevoModal.querySelector('.modal-body #modulos').value =""
-    nuevoModal.querySelector('.modal-body #cliente').value =""
-    nuevoModal.querySelector('.modal-body #fallaCliente').value =""
-
-    })
-    editaModal.addEventListener('shown.bs.modal', event => {
+editaModal.addEventListener('shown.bs.modal', event => {
     let button = event.relatedTarget;
     let id = button.getAttribute('data-bs-id');
 
@@ -43,7 +40,7 @@
         inputId.value = data.id;
         inputFolio.value = data.folio;
         inputEstado.value = data.estado;
-        inputIngreso.value = data.ingresoFecha; 
+        inputIngreso.value = data.ingresoFecha;
         // Buscar el módulo correspondiente en la lista de módulos y seleccionarlo
         let options = inputModulos.querySelectorAll('option');
         for (let option of options) {
@@ -53,39 +50,36 @@
             }
         }
         inputCliente.value = data.cliente;
-        inputFalla.value = data.falla;
+        inputFalla.value = data.fallaCliente;
     })
     .catch(err => console.log(err));
 });
 
-     
+eliminaModal.addEventListener('shown.bs.modal', event => {
+    let button = event.relatedTarget;
+    let id = button.getAttribute('data-bs-id');
+    eliminaModal.querySelector('.modal-footer #id').value = id;
+});
 
-    eliminaModal.addEventListener('shown.bs.modal', event => {
+function agregarEntrada() {
+    // Obtener los datos del formulario de la nueva entrada
+    var formData = new FormData(document.getElementById('formularioNuevaEntrada'));
 
-        let button = event.relatedTarget;
-        let id = button.getAttribute('data-bs-id');
-        eliminaModal.querySelector('.modal-footer #id').value=id
-
-    })
-    function agregarEntrada() {
-        // Obtener los datos del formulario de la nueva entrada
-        var formData = new FormData(document.getElementById('formularioNuevaEntrada'));
-
-        // Enviar los datos al servidor mediante AJAX
-        $.ajax({
-            type: 'POST',
-            url: 'agregarEntrada.php', // URL del script PHP para guardar la entrada
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                // Manejar la respuesta del servidor
-                console.log(response); // Puedes mostrar un mensaje de éxito o actualizar la lista de entradas
-                $('#agregarEntradaModal').modal('hide'); // Cerrar el modal después de guardar la entrada
-            },
-            error: function(xhr, status, error) {
-                // Manejar errores en caso de que ocurran
-                console.error(xhr.responseText);
-            }
-        });
-    }
+    // Enviar los datos al servidor mediante AJAX
+    $.ajax({
+        type: 'POST',
+        url: 'agregarEntrada.php', // URL del script PHP para guardar la entrada
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            // Manejar la respuesta del servidor
+            console.log(response); // Puedes mostrar un mensaje de éxito o actualizar la lista de entradas
+            $('#agregarEntradaModal').modal('hide'); // Cerrar el modal después de guardar la entrada
+        },
+        error: function(xhr, status, error) {
+            // Manejar errores en caso de que ocurran
+            console.error(xhr.responseText);
+        }
+    });
+}

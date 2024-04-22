@@ -8,7 +8,7 @@ $modulos = $conn->real_escape_string($_POST['modulos']);
 $cliente = $conn->real_escape_string($_POST['cliente']);
 $fallaCliente = $conn->real_escape_string($_POST['fallaCliente']);
 
-$sql = "INSERT INTO entradas (folio,id_estado,ingresoFecha,id_modulo,cliente,fallaCliente)
+$sql = "INSERT INTO entradas (id_consecutivo,id_estado,ingresoFecha,id_modulo,cliente,fallaCliente)
 VALUES ('$folio',$estado,NOW(),$modulos,'$cliente','$fallaCliente')" ;
 
 if ($conn->query($sql)){

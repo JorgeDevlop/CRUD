@@ -7,7 +7,7 @@ if(isset($_POST['id'])) {
     $id = $conn->real_escape_string($_POST['id']);
 
     // Consulta SQL para seleccionar la entrada con el ID específico
-    $sql = "SELECT id, folio, id_estado, ingresoFecha, id_modulo, cliente, fallaCliente FROM entradas WHERE id=$id LIMIT 1";
+    $sql = "SELECT id, id_consecutivo, id_estado, ingresoFecha, id_modulo, cliente, fallaCliente FROM entradas WHERE id=$id LIMIT 1";
     $resultado = $conn->query($sql);
     $rows = $resultado->num_rows;
 
